@@ -171,64 +171,64 @@ function App() {
   var rgl_bar = new Array()
   for (let i=0; i<bins.bins.length; i++) {
     for (let j=0; j<[... new Set(otl_data)].length; j++ ) {
-        if (bins.bins[i].sample.includes([... new Set(otl_data)][j])) {
-          otl_bar.push(bins.data[i])
-        } else {
-          rgl_bar.push(bins.data[i])
-        }  
+      if (bins.bins[i].sample.includes([... new Set(otl_data)][j])) {
+        otl_bar.push(bins.data[i])
+      } else {
+        rgl_bar.push(bins.data[i])
+      }  
     }
   }
 
   const options = {
     title: {
-        text: 'MACS Value of Conv Nodes',
-        left: 'center',
-        top: 20
+      text: 'MACS Value of Conv Nodes',
+      left: 'center',
+      top: 20
     },
     grid: {
-        left: '3%',
-        right: '3%',
-        bottom: '3%',
-        containLabel: true
+      left: '3%',
+      right: '3%',
+      bottom: '3%',
+      containLabel: true
     },
     tooltip:{},
     xAxis: {
-        scale: true, 
-        name: "MACS Value",
-        nameLocation: "middle",
-        type: "category",
-        show : false,
-        // data: bins.
+      scale: true, 
+      name: "MACS Value",
+      nameLocation: "middle",
+      type: "category",
+      show : false,
+      // data: bins.
     },
     yAxis: {
-        name:"Number of Conv Node"
+      name:"Number of Conv Node"
     },
     series: [{
-        name: 'Data',
-        type: 'bar',
-        barWidth: '99.3%',
-        // barCategoryGap: 0,
-        label: {
-            normal: {
-                show: false,
-                position: 'top'
-                }
-            },
-        color: ['rgb(138, 210, 255)'],
-        data: rgl_bar
+      name: 'Data',
+      type: 'bar',
+      barWidth: '99.3%',
+      // barCategoryGap: 0,
+      label: {
+        normal: {
+          show: false,
+          position: 'top'
+          }
+        },
+      color: ['rgb(138, 210, 255)'],
+      data: rgl_bar
     },{
-        name: 'Outliers',
-        type: 'bar',
-        barWidth: '99.3%',
-        // barCategoryGap: 0,
-        label: {
-            normal: {
-                show: false,
-                position: 'top'
-                }
-            },
-        data: otl_bar,
-        color: ['rgb(255, 56, 56)']
+      name: 'Outliers',
+      type: 'bar',
+      barWidth: '99.3%',
+      // barCategoryGap: 0,
+      label: {
+          normal: {
+              show: false,
+              position: 'top'
+              }
+          },
+      data: otl_bar,
+      color: ['rgb(255, 56, 56)']
     }
   ]
 }
