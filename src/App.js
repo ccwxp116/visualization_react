@@ -222,11 +222,11 @@ function App() {
       barWidth: '99.3%',
       // barCategoryGap: 0,
       label: {
-          normal: {
-              show: false,
-              position: 'top'
-              }
-          },
+        normal: {
+          show: false,
+          position: 'top'
+          }
+        },
       data: otl_bar,
       color: ['rgb(255, 56, 56)']
     }
