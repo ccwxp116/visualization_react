@@ -172,13 +172,21 @@ function App() {
   for (let i=0; i<bins.bins.length; i++) {
     for (let j=0; j<[... new Set(otl_data)].length; j++ ) {
       if (bins.bins[i].sample.includes([... new Set(otl_data)][j])) {
-        otl_bar.push(bins.data[i])
+        otl_bar.push(bins.data[i][1])
       } else {
-        rgl_bar.push(bins.data[i])
+        rgl_bar.push(bins.data[i][1])
       }  
     }
   }
+  
+  console.log([... new Set(otl_bar)])
+  console.log([... new Set(rgl_bar)])
 
+  var test_axis = new Array ()
+  for (let i = 0; i < bins.data.length; i++){
+    test_axis.push(bins.data[i][4])
+  }
+  
   const options = {
     title: {
       text: 'MACS Value of Conv Nodes',
@@ -197,41 +205,49 @@ function App() {
       name: "MACS Value",
       nameLocation: "middle",
       type: "category",
-      show : false,
-      // data: bins.
+      show : true,
+      data: test_axis
     },
     yAxis: {
       name:"Number of Conv Node"
     },
-    series: [{
-      name: 'Data',
-      type: 'bar',
-      barWidth: '99.3%',
-      // barCategoryGap: 0,
-      label: {
-        normal: {
-          show: false,
-          position: 'top'
-          }
-        },
-      color: ['rgb(138, 210, 255)'],
-      data: rgl_bar
-    },{
-      name: 'Outliers',
-      type: 'bar',
-      barWidth: '99.3%',
-      // barCategoryGap: 0,
-      label: {
-        normal: {
-          show: false,
-          position: 'top'
-          }
-        },
-      data: otl_bar,
-      color: ['rgb(255, 56, 56)']
+    series: [
+      //   {
+      //   name: 'Data',
+      //   type: 'bar',
+      //   barWidth: '99.3%',
+      //   // barCategoryGap: 0,
+      //   label: {
+      //     normal: {
+      //       show: false,
+      //       position: 'top'
+      //       }
+      //     },
+      //   color: ['rgb(138, 210, 255)'],
+      //   data: [... new Set(rgl_bar)]
+      // },
+      {
+        name: 'Outliers',
+        type: 'bar',
+        barWidth: '99.3%',
+        // barCategoryGap: 0,
+        label: {
+          normal: {
+            show: false,
+            position: 'top'
+            }
+          },
+        data: [... new Set(otl_bar)],
+        color: ['rgb(255, 56, 56)']
+      }
+    ],
+    label: {
+      normal: {
+        show: true,
+        position: 'top'
+        }
+      }
     }
-  ]
-}
 
   return (
     <div className="App">
