@@ -170,14 +170,16 @@ function App() {
   var otl_bar = new Array();
   var rgl_bar = new Array()
   for (let i=0; i<bins.bins.length; i++) {
-    for (let j=0; j<[... new Set(otl_data)].length; j++ ) {
-      if (bins.bins[i].sample.includes([... new Set(otl_data)][j])) {
-        otl_bar.push(bins.data[i][1])
-      } else {
-        rgl_bar.push(bins.data[i][1])
-      }  
-    }
-  }
+    if (bins.bins[i].sample.length === 0){
+      rgl_bar.push(0)
+    } else if (otl_data.includes(bins.bins[i].sample[1])){
+          otl_bar.push(bins.data[i][1])
+        } else {
+          rgl_bar.push(bins.data[i][1])
+        }
+      }
+    // still wrong, try something like while loop
+  console.log(rgl_bar)
   
   let otl_bar1 = [... new Set(otl_bar)]
   let rgl_bar1 = [... new Set(rgl_bar)]
