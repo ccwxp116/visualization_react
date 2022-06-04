@@ -165,7 +165,7 @@ function App() {
   // histogram function
   // console.log(histogram)
   var bins = histogram(MACS)
-  console.log(bins)
+  // console.log(bins)
   // find histogram data for regular data and outliers
   var otl_bar = new Array();
   var rgl_bar = new Array()
@@ -179,8 +179,17 @@ function App() {
     }
   }
   
-  console.log([... new Set(otl_bar)])
-  console.log([... new Set(rgl_bar)])
+  let otl_bar1 = [... new Set(otl_bar)]
+  let rgl_bar1 = [... new Set(rgl_bar)]
+  console.log(rgl_bar1)
+  // onnx.map(({ MACS }) => MACS)
+  let red1 = rgl_bar1.map((x) => {
+    // console.log(x)
+    return {value: x, itemStyle: {color: 'blue' }}
+  })
+  // console.log(red1)
+
+  let combined_bar = [...red1, ...otl_bar1]
 
   var test_axis = new Array ()
   for (let i = 0; i < bins.data.length; i++){
@@ -223,7 +232,7 @@ function App() {
       //       position: 'top'
       //       }
       //     },
-      //   color: ['rgb(138, 210, 255)'],
+
       //   data: [... new Set(rgl_bar)]
       // },
       {
@@ -237,7 +246,7 @@ function App() {
             position: 'top'
             }
           },
-        data: [... new Set(otl_bar)],
+        data: combined_bar,
         color: ['rgb(255, 56, 56)']
       }
     ],
