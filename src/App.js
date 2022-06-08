@@ -4,19 +4,18 @@ import { histogram } from 'echarts-stat';
 
 function App() {
   // API calls goes here to retrive
-  // var onnx = [{"Index":1,"Op":"Conv","Id":3.0,"Iy":640.0,"Ix":640.0,"IFMAP":1228800,"N":48.0,"D":3.0,"Ky":3.0,"Kx":3.0,"Weight":1296,"Od":48.0,"Oy":320.0,"Ox":320.0,"OFMAP":4915200,"MACS":132710400,"Node Name":"Conv_0"},{"Index":2,"Op":"Relu","Id":48.0,"Iy":320.0,"Ix":320.0,"IFMAP":4915200,"N":0.0,"D":0.0,"Ky":0.0,"Kx":0.0,"Weight":0,"Od":48.0,"Oy":320.0,"Ox":320.0,"OFMAP":4915200,"MACS":0,"Node Name":"Relu_1"},{"Index":3,"Op":"Conv","Id":48.0,"Iy":320.0,"Ix":320.0,"IFMAP":4915200,"N":96.0,"D":48.0,"Ky":3.0,"Kx":3.0,"Weight":41472,"Od":96.0,"Oy":160.0,"Ox":160.0,"OFMAP":2457600,"MACS":1061683200,"Node Name":"Conv_2"},{"Index":4,"Op":"Relu","Id":96.0,"Iy":160.0,"Ix":160.0,"IFMAP":2457600,"N":0.0,"D":0.0,"Ky":0.0,"Kx":0.0,"Weight":0,"Od":96.0,"Oy":160.0,"Ox":160.0,"OFMAP":2457600,"MACS":0,"Node Name":"Relu_3"},{"Index":5,"Op":"Conv","Id":96.0,"Iy":160.0,"Ix":160.0,"IFMAP":2457600,"N":48.0,"D":96.0,"Ky":1.0,"Kx":1.0,"Weight":4608,"Od":48.0,"Oy":160.0,"Ox":160.0,"OFMAP":1228800,"MACS":117964800,"Node Name":"Conv_4"}]
-  // // console.log(onnx);
+  var onnx = [{"Index":1,"Op":"Conv","Id":3.0,"Iy":640.0,"Ix":640.0,"IFMAP":1228800,"N":48.0,"D":3.0,"Ky":3.0,"Kx":3.0,"Weight":1296,"Od":48.0,"Oy":320.0,"Ox":320.0,"OFMAP":4915200,"MACS":132710400,"Node Name":"Conv_0"},{"Index":2,"Op":"Relu","Id":48.0,"Iy":320.0,"Ix":320.0,"IFMAP":4915200,"N":0.0,"D":0.0,"Ky":0.0,"Kx":0.0,"Weight":0,"Od":48.0,"Oy":320.0,"Ox":320.0,"OFMAP":4915200,"MACS":0,"Node Name":"Relu_1"},{"Index":3,"Op":"Conv","Id":48.0,"Iy":320.0,"Ix":320.0,"IFMAP":4915200,"N":96.0,"D":48.0,"Ky":3.0,"Kx":3.0,"Weight":41472,"Od":96.0,"Oy":160.0,"Ox":160.0,"OFMAP":2457600,"MACS":1061683200,"Node Name":"Conv_2"},{"Index":4,"Op":"Relu","Id":96.0,"Iy":160.0,"Ix":160.0,"IFMAP":2457600,"N":0.0,"D":0.0,"Ky":0.0,"Kx":0.0,"Weight":0,"Od":96.0,"Oy":160.0,"Ox":160.0,"OFMAP":2457600,"MACS":0,"Node Name":"Relu_3"},{"Index":5,"Op":"Conv","Id":96.0,"Iy":160.0,"Ix":160.0,"IFMAP":2457600,"N":48.0,"D":96.0,"Ky":1.0,"Kx":1.0,"Weight":4608,"Od":48.0,"Oy":160.0,"Ox":160.0,"OFMAP":1228800,"MACS":117964800,"Node Name":"Conv_4"}]
+  
+  var result = onnx.map(({ MACS }) => MACS)
 
-  // var result = onnx.map(({ MACS }) => MACS)
+  let ct = -1
+  for (var i = 0; i < result.length; i++){
+      if (result[i] === 0){
+    ct = ct+1
+    onnx.splice(i-ct,1)    
+  }}
 
-  // let ct = -1
-  // for (var i = 0; i < result.length; i++){
-  //     if (result[i] === 0){
-  //   ct = ct+1
-  //   onnx.splice(i-ct,1)    
-  // }}
-
-  // var MACS_name = onnx.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']}))
+  var MACS_name = onnx.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']}))
   // // var MACS = onnx.map(({ MACS }) => MACS)
   // var WGT_name = onnx.map(x=>x['Weight'] && ({Name:x['Node Name'],Weight:x['Weight']}))
   // var WGT = onnx.map(({ Weight }) => Weight)
@@ -141,124 +140,136 @@ function App() {
   // find outliers    
   var length = MACS.length
   var data = MACS.sort(function(a,b){return a-b})
-  var sum=0;     
-  var sumsq = 0;
+  var sum=0   
+  var sumsq = 0
   for (let i=0; i<length; ++i) {
-    sum+=data[i];
-    sumsq+=data[i] * data[i];
+    sum+=data[i]
+    sumsq+=data[i] * data[i]
   }
   var mean = sum/length; 
-  var median = data[Math.round(length/2)];
-  var LQ = data[Math.round(length/4)];
-  var UQ = data[Math.round(3*length/4)];
-  var IQR = UQ-LQ;
-  var rgl_data = new Array();
-  var otl_data = new Array();
+  var median = data[Math.round(length/2)]
+  var LQ = data[Math.round(length/4)]
+  var UQ = data[Math.round(3*length/4)]
+  var IQR = UQ-LQ
+  var rgl_data = new Array()
+  var otl_data = new Array()
   for (let i=0; i<data.length; ++i) {
     if(data[i]> median - 2 * IQR && data[i] < mean + 2 * IQR) {
-      rgl_data.push(data[i]);
+      rgl_data.push(data[i])
     } else {
-      otl_data.push(data[i]);
+      otl_data.push(data[i])
+      // otl_data_name.push(MACS_name[i])
     }
   }
 
   // histogram function
   // console.log(histogram)
-  var bins = histogram(MACS)
+  var bins = histogram(MACS,'freedmanDiaconis')
   // console.log(bins)
   // find histogram data for regular data and outliers
-  var otl_bar = new Array();
+  var otl_bar = new Array()
   var rgl_bar = new Array()
-  for (let i=0; i<bins.bins.length; i++) {
-    if (bins.bins[i].sample.length === 0){
-      rgl_bar.push(0)
-    } else if (otl_data.includes(bins.bins[i].sample[1])){
-          otl_bar.push(bins.data[i][1])
-        } else {
-          rgl_bar.push(bins.data[i][1])
+  for (let i=0; i<bins.customData.length; i++) {
+    if ( bins.customData[i][0]> median - 2 * IQR && bins.customData[i][0] < mean + 2 * IQR){
+      rgl_bar.push(bins.customData[i][2])
+      otl_bar.push("")
+    } else {
+          otl_bar.push(bins.customData[i][2])
+          rgl_bar.push("")
         }
-      }
-    // still wrong, try something like while loop
-  console.log(rgl_bar)
-  
-  let otl_bar1 = [... new Set(otl_bar)]
-  let rgl_bar1 = [... new Set(rgl_bar)]
-  console.log(rgl_bar1)
-  // onnx.map(({ MACS }) => MACS)
-  let red1 = rgl_bar1.map((x) => {
-    // console.log(x)
-    return {value: x, itemStyle: {color: 'blue' }}
-  })
-  // console.log(red1)
-
-  let combined_bar = [...red1, ...otl_bar1]
+      }  
 
   var test_axis = new Array ()
   for (let i = 0; i < bins.data.length; i++){
     test_axis.push(bins.data[i][4])
   }
+
+  var text_sub = new Array ()
+  for (let i = 0; i< MACS_name.length; i++){
+    text_sub.push("\n"+MACS_name[i].Name+":"+MACS_name[i].MACS)
+  }
   
-  const options = {
+  const options = {    
     title: {
-      text: 'MACS Value of Conv Nodes',
-      left: 'center',
-      top: 20
+        text: 'MACS Value of Conv Nodes',
+        left: 'center',
+        top: 20,
+        itemGap: 10,
+        // subtext:  '{a|' + text_sub + '}' ,
+        subtext: text_sub,
+        subtextStyle:{
+            textBoarderType:"dashed",
+            align: "left",
+            color: '#BA1B1B'
+            // rich:{
+            //   a:{
+            //     backgroundColor: "#FFEDE9",
+            //     borderColor: "#BA1B1B"
+            //   }
+            // }
+        }
     },
     grid: {
-      left: '3%',
-      right: '3%',
-      bottom: '3%',
-      containLabel: true
+        left: '3%',
+        right: '3%',
+        bottom: '3%',
+        containLabel: true
     },
     tooltip:{},
     xAxis: {
-      scale: true, 
-      name: "MACS Value",
-      nameLocation: "middle",
-      type: "category",
-      show : true,
-      data: test_axis
+        scale: true, 
+        name: "MACS Value",
+        nameLocation: "middle",
+        type: "category",
+        show : true,
+        data: test_axis
     },
     yAxis: {
-      name:"Number of Conv Node"
+        name:"Number of Conv Node"
     },
     series: [
-      //   {
-      //   name: 'Data',
-      //   type: 'bar',
-      //   barWidth: '99.3%',
-      //   // barCategoryGap: 0,
-      //   label: {
-      //     normal: {
-      //       show: false,
-      //       position: 'top'
-      //       }
-      //     },
-
-      //   data: [... new Set(rgl_bar)]
-      // },
-      {
+        {
+        name: 'Data',
+        type: 'bar',
+        stack: "total",
+        barWidth: '99.3%',
+        barCategoryGap: 0,
+        label: {
+            normal: {
+                show: false,
+                position: 'top'
+                }
+            },
+            data: rgl_bar,
+            color: '#415AAA'
+        },{
         name: 'Outliers',
         type: 'bar',
+        stack: "total",
         barWidth: '99.3%',
-        // barCategoryGap: 0,
+        barCategoryGap: 0,
         label: {
-          normal: {
-            show: false,
-            position: 'top'
-            }
-          },
-        data: combined_bar,
-        color: ['rgb(255, 56, 56)']
-      }
+            normal: {
+                show: false,
+                position: 'top'
+                }
+            },
+        data: otl_bar,
+        color: '#BA1B1B'
+        }
     ],
     label: {
-      normal: {
-        show: true,
-        position: 'top'
-        }
-      }
+        normal: {
+            show: true,
+            position: 'top'
+            }
+    },
+    legend: {
+        orient: "horizontal",
+        top: 40
     }
+};
+
 
   return (
     <div className="App">
