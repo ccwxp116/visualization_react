@@ -161,6 +161,7 @@ function App() {
       // otl_data_name.push(MACS_name[i])
     }
   }
+  console.log(otl_data)
 
   // histogram function
   // console.log(histogram)
@@ -186,29 +187,31 @@ function App() {
 
   var text_sub = new Array ()
   for (let i = 0; i< MACS_name.length; i++){
-    text_sub.push("\n"+MACS_name[i].Name+":"+MACS_name[i].MACS)
+    text_sub.push("\n"+MACS_name[i].Name+": "+MACS_name[i].MACS)
   }
   
 // how to add tooltip or legend for each outlier????
+// what i want for input: [{},{},{name:"node1:xxxx, node 2:xxxx"}]
 
   const options = {    
     title: {
-        text: 'MACS Value of Conv Nodes',
+        text: 'MACS Value Distribution of Conv Nodes',
         left: 'center',
         top: 20,
-        itemGap: 10,
-        // subtext:  '{a|' + text_sub + '}' ,
-        subtext: text_sub,
+        itemGap: 40,
+        subtext:  '{a|' + text_sub + '}' ,
+        // subtext: text_sub,
         subtextStyle:{
             textBoarderType:"dashed",
-            align: "left",
-            color: '#BA1B1B'
-            // rich:{
-            //   a:{
-            //     backgroundColor: "#FFEDE9",
-            //     borderColor: "#BA1B1B"
-            //   }
-            // }
+            align: 'left',
+            color: '#BA1B1B',
+            rich:{
+              a:{
+                // backgroundColor: "#FFEDE9",
+                // borderColor: "#BA1B1B"
+                // borderWidth: 1
+              }
+            }
         }
     },
     grid: {
@@ -267,8 +270,8 @@ function App() {
             }
     },
     legend: {
-        orient: "horizontal",
-        top: 40
+        orient: "vertical",
+        top: 45
     }
 };
 
