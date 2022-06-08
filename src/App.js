@@ -179,9 +179,9 @@ function App() {
         }
       }  
 
-  var test_axis = new Array ()
+  var text_axis = new Array ()
   for (let i = 0; i < bins.data.length; i++){
-    test_axis.push(bins.data[i][4])
+    text_axis.push(bins.data[i][4])
   }
 
   var text_sub = new Array ()
@@ -189,6 +189,8 @@ function App() {
     text_sub.push("\n"+MACS_name[i].Name+":"+MACS_name[i].MACS)
   }
   
+// how to add tooltip or legend for each outlier????
+
   const options = {    
     title: {
         text: 'MACS Value of Conv Nodes',
@@ -222,7 +224,7 @@ function App() {
         nameLocation: "middle",
         type: "category",
         show : true,
-        data: test_axis
+        data: text_axis
     },
     yAxis: {
         name:"Number of Conv Node"
@@ -269,7 +271,6 @@ function App() {
         top: 40
     }
 };
-
 
   return (
     <div className="App">
