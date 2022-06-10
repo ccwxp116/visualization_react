@@ -40,7 +40,7 @@ export default function GraphS({ resultState }) {
       otl_data_name.push(MACS_name[i])
     }
   }
-
+console.log(otl_data_name)
   // histogram function
   let bins = histogram(MACS_m, "freedmanDiaconis")
 
@@ -63,6 +63,32 @@ export default function GraphS({ resultState }) {
   for (let i = 0; i < bins.data.length; i++) {
     text_axis.push(bins.data[i][4])
   }
+
+  // outliers' node name and value
+  var text_name = []
+
+  for (let i = 0; i < bins.bins.length; i++) {
+    let uniq = [...new Set(bins.bins[i].sample)]
+    let inner = []
+    if (bins.bins[i].sample.length != 0) {
+      for (let j = 0; j < otl_data_name.length; j++) {
+        if (uniq.includes(otl_data_name[j].MACS)) {
+          inner.push(otl_data_name[j].Name + ": " + otl_data_name[j].MACS)
+        } 
+      }
+    } else {
+      inner.push("")
+    }
+    text_name.push(inner)
+  }
+
+  // let otl_arr = []
+
+  // for (i = 0; i < text_name.length; i++) {
+  //   otl_arr = {Node:text_name[i], Value:otl_bar[i]}
+  // }
+
+  // console.log(otl_arr)
 
   const options = {    
     title: {

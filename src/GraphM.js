@@ -12,9 +12,8 @@ export default function GraphM({ resultState }) {
     }
   }
 
-  const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
-
-  let MACS_m = rmv0.map( x => x/1000000 )
+  const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:Math.sqrt(x['MACS'])}))
+  let MACS_m = rmv0.map( x => Math.sqrt(x) )
 
   // find outliers    
   let length = MACS_m.length
@@ -66,7 +65,7 @@ export default function GraphM({ resultState }) {
 
   const options = {    
     title: {
-      text: 'AE YOLOV5',
+      text: 'sqrt transformation',
       left: 'center',
       top: 20,
       itemGap: 40
@@ -111,7 +110,7 @@ export default function GraphM({ resultState }) {
         name: 'Data',
         type: 'bar',
         stack: "total",
-        barWidth: '150%',
+        barWidth: '99.3%',
         barCategoryGap: 0,
         data: rgl_bar,
         color: 'purple'
