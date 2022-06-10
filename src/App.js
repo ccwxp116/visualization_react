@@ -9,6 +9,7 @@ function App() {
   var result = onnx.map(({ MACS }) => MACS)
 
   let ct = -1
+
   for (var i = 0; i < result.length; i++){
       if (result[i] === 0){
     ct = ct+1
@@ -16,9 +17,11 @@ function App() {
   }}
 
   var MACS_name = onnx.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
-  console.log(MACS_name)
-  // // var MACS = onnx.map(({ MACS }) => MACS)
+
+  // var MACS = onnx.map(({ MACS }) => MACS)
+
   // var WGT_name = onnx.map(x=>x['Weight'] && ({Name:x['Node Name'],Weight:x['Weight']}))
+
   // var WGT = onnx.map(({ Weight }) => Weight)
 
   //delete later
@@ -137,30 +140,30 @@ function App() {
       2119680,
       455966720
   ] 
-  // var MACS_l = MACS.map(x => Math.log10(x))
+  // transformation:
+  // var MACS_l = MACS.map( x => Math.log10(x))
 
-  // var MACS_c = MACS.map(x => Math.cbrt(x))
+  // var MACS_c = MACS.map( x => Math.cbrt(x) )
 
-  // var MACS_s = MACS.map(x => Math.sqrt(x))
+  // var MACS_s = MACS.map( x => Math.sqrt(x) )
 
-  var MACS_m = MACS.map(x => x/1000000)
+  var MACS_m = MACS.map( x => x/1000000 )
 
   // find outliers    
   var length = MACS_m.length
   var data = MACS_m.sort(function(a,b){return a-b})
-  var sum=0   
-  var sumsq = 0
+  var sum=0
+
   for (let i=0; i<length; ++i) {
     sum+=data[i]
-    sumsq+=data[i] * data[i]
   }
+
   var mean = sum/length; 
   var median = data[Math.round(length/2)]
-  var LQ = data[Math.round(length/4)]
-  var UQ = data[Math.round(3*length/4)]
-  var IQR = UQ-LQ
-  var rgl_data = new Array()
-  var otl_data = new Array()
+  var IQR = data[Math.round(3*length/4)] - data[Math.round(length/4)]
+  var rgl_data = []
+  var otl_data = []
+
   for (let i=0; i<data.length; ++i) {
     if(data[i]> median - 2 * IQR && data[i] < mean + 2 * IQR) {
       rgl_data.push(data[i])
@@ -169,37 +172,40 @@ function App() {
       // otl_data_name.push(MACS_name[i])
     }
   }
-  console.log(otl_data)
 
   // histogram function
-  // console.log(histogram)
   var bins = histogram(MACS_m, "freedmanDiaconis")
-  console.log(bins)
+
   // find histogram data for regular data and outliers
-  var otl_bar = new Array()
-  var rgl_bar = new Array()
+  var otl_bar = []
+
+  var rgl_bar = []
+
   for (let i=0; i<bins.customData.length; i++) {
     if ( bins.customData[i][0]> median - 2 * IQR && bins.customData[i][0] < mean + 2 * IQR){
       rgl_bar.push(bins.customData[i][2])
       otl_bar.push("")
     } else {
-          otl_bar.push(bins.customData[i][2])
-          rgl_bar.push("")
-        }
-      }  
+      otl_bar.push(bins.customData[i][2])
+      rgl_bar.push("")
+    }
+  }  
 
-  var text_axis = new Array ()
-  for (let i = 0; i < bins.data.length; i++){
+  var text_axis = []
+
+  for (let i = 0; i < bins.data.length; i++) {
     text_axis.push(bins.data[i][4])
   }
 
-  var text_sub = new Array ()
-  for (let i = 0; i< MACS_name.length; i++){
-    text_sub.push("\n"+MACS_name[i].Name+": "+MACS_name[i].MACS)
-  }
+  // var text_sub = []
+
+  // for (let i = 0; i< MACS_name.length; i++) {
+  //   text_sub.push("\n"+MACS_name[i].Name+": "+MACS_name[i].MACS)
+  // }
 
   // outliers' node name and value
-  // var text_name = new Array ()
+  // var text_name = []
+
   // for (let i = 0; i < bins.bins.length; i++) {
   //   let uniq = [...new Set(bins.bins[i].sample)]
   //   let inner = []
@@ -214,12 +220,14 @@ function App() {
   //   }
   //   text_name.push(inner)
   // }
-  // let otl_arr = new Array ()
+
+  // let otl_arr = []
+
   // for (i = 0; i < text_name.length; i++) {
   //   otl_arr[i] = {Node:text_name[i], Value:otl_bar[i]}
   // }
-  // console.log(otl_arr)
 
+  // console.log(otl_arr)
 
 // how to add tooltip or legend for each outlier????
 // use tooltip formatter
@@ -231,50 +239,57 @@ function App() {
         top: 20,
         itemGap: 40
     },
+
     grid: {
         left: '3%',
         right: '3%',
         bottom: '3%',
         containLabel: true
     },
+
     tooltip:{
       trigger: "item",
       formatter: function (params) {
         return `${params.seriesName}<br />
-        ${params.name}: ${params.data}<br />`
-        // ${text_name}
+        ${params.name}: ${params.data}<br />
+        1111 node name:value goes here`
+        // ${params.text_name}
       }
     },
+
     xAxis: {
-        scale: true, 
-        name: "MACS Value (in million)",
-        nameLocation: "middle",
-        type: "category",
-        show : true,
-        data: text_axis,
-        nameTextStyle:{
-          lineHeight: 20
-        },
-        axisLabel:{
-          rotate: 0
-        }
+      scale: true, 
+      name: "MACS Value (in million)",
+      nameLocation: "middle",
+      type: "category",
+      show : true,
+      data: text_axis,
+      nameTextStyle:{
+        lineHeight: 20
+      },
+      axisLabel:{
+        rotate: 0
+      }
     },
+
     yAxis: {
-        name:"Number of Conv Node"
+      name:"Number of Conv Node"
     },
+
     gird:{
       show: false
     },
+
     series: [
-        {
+      {
         name: 'Data',
         type: 'bar',
         stack: "total",
         barWidth: '99.3%',
         barCategoryGap: 0,
-            data: rgl_bar,
-            color: '#415AAA'
-        },{
+        data: rgl_bar,
+        color: '#415AAA'
+      },{
         name: 'Outliers',
         type: 'bar',
         stack: "total",
@@ -287,12 +302,13 @@ function App() {
         //   },
         data: otl_bar,
         color: '#BA1B1B'
-        }
+      }
     ],
+
     legend: {
-        orient: "horizontal",
-        top: 20,
-        right: 20
+      orient: "horizontal",
+      top: 20,
+      right: 20
     }
   };
 
