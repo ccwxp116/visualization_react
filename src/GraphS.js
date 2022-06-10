@@ -6,17 +6,17 @@ export default function GraphS({ resultState }) {
   console.log(resultState)
   let options = []
   // if (resultState) {
-    let rmv0 = resultState.map(({ MACS }) => MACS)
-    let ct = -1
+    // let rmv0 = resultState.map(({ MACS }) => MACS)
+    // let ct = -1
   
-    for (let i = 0; i < rmv0.length; i++){
-      if (rmv0[i] === 0){
-        ct = ct+1
-        resultState.splice(i-ct,1)    
-      }
-    }
+    // for (let i = 0; i < rmv0.length; i++){
+    //   if (rmv0[i] === 0){
+    //     ct = ct+1
+    //     resultState.splice(i-ct,1)    
+    //   }
+    // }
   
-    const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
+    // const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
   
     let MACS_m = MACS.map( x => x/1000000 )
   
@@ -34,14 +34,14 @@ export default function GraphS({ resultState }) {
     let IQR = data[Math.round(3*length/4)] - data[Math.round(length/4)]
     let rgl_data = []
     let otl_data = []
-    let otl_data_name = []
+    // let otl_data_name = []
   
     for (let i=0; i<data.length; ++i) {
       if(data[i]> median - 2 * IQR && data[i] < mean + 2 * IQR) {
         rgl_data.push(data[i])
       } else {
         otl_data.push(data[i])
-        otl_data_name.push(MACS_name[i])
+        // otl_data_name.push(MACS_name[i])
       }
     }
   
