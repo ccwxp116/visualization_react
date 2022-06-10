@@ -12,8 +12,8 @@ export default function GraphM({ resultState }) {
     }
   }
 
-  const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:Math.sqrt(x['MACS'])}))
-  let MACS_m = rmv0.map( x => Math.sqrt(x) )
+  const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:Math.log10(x['MACS'])}))
+  let MACS_m = rmv0.map( x => Math.log10(x) )
 
   // find outliers    
   let length = MACS_m.length
