@@ -241,8 +241,8 @@ function App() {
       trigger: "item",
       formatter: function (params) {
         return `${params.seriesName}<br />
-        ${params.name}: ${params.data}<br />
-        ${text_name}`
+        ${params.name}: ${params.data}<br />`
+        // ${text_name}
       }
     },
     xAxis: {
