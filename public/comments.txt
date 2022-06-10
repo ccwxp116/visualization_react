@@ -1,0 +1,52 @@
+a
+// const MACS = onnx.map(({ MACS }) => MACS)
+
+// const WGT_name = onnx.map(x=>x['Weight'] && ({Name:x['Node Name'],Weight:x['Weight']}))
+
+// const WGT = onnx.map(({ Weight }) => Weight)
+
+//delete later
+
+// transformation:
+// var MACS_l = MACS.map( x => Math.log10(x))
+
+// var MACS_c = MACS.map( x => Math.cbrt(x) )
+
+// var MACS_s = MACS.map( x => Math.sqrt(x) )
+  
+// Second comment near bottom
+
+  // var text_sub = []
+
+  // for (let i = 0; i< MACS_name.length; i++) {
+  //   text_sub.push("\n"+MACS_name[i].Name+": "+MACS_name[i].MACS)
+  // }
+
+  // outliers' node name and value
+  // var text_name = []
+
+  // for (let i = 0; i < bins.bins.length; i++) {
+  //   let uniq = [...new Set(bins.bins[i].sample)]
+  //   let inner = []
+  //   if (bins.bins[i].sample.length != 0) {
+  //     for (let j = 0; j < otl_data_name.length; j++) {
+  //       if (uniq.includes(otl_data_name[j].MACS)) {
+  //         inner.push(otl_data_name[j].Name + ": " + otl_data_name[j].MACS)
+  //       } 
+  //     }
+  //   } else {
+  //     inner.push("")
+  //   }
+  //   text_name.push(inner)
+  // }
+
+  // let otl_arr = []
+
+  // for (i = 0; i < text_name.length; i++) {
+  //   otl_arr[i] = {Node:text_name[i], Value:otl_bar[i]}
+  // }
+
+  // console.log(otl_arr)
+
+  // how to add tooltip or legend for each outlier????
+  // use tooltip formatter

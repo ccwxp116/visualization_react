@@ -1,6 +1,7 @@
 # Active Tasks
 1. figure out how to fold code in vscode - 6.10
-2. do chart stuff
+2. delete modelhug repo
+
 
 # Ongoing
 Write clean code, reference airbnb guide: https://github.com/airbnb/javascript#whitespace
