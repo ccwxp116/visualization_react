@@ -3,26 +3,35 @@ import ReactECharts from 'echarts-for-react';
 import { histogram } from 'echarts-stat';
 
 function App() {
-  // API calls goes here to retrive
-  var onnx = [{"Index":1,"Op":"Conv","Id":3.0,"Iy":640.0,"Ix":640.0,"IFMAP":1228800,"N":48.0,"D":3.0,"Ky":3.0,"Kx":3.0,"Weight":1296,"Od":48.0,"Oy":320.0,"Ox":320.0,"OFMAP":4915200,"MACS":132710400,"Node Name":"Conv_0"},{"Index":2,"Op":"Relu","Id":48.0,"Iy":320.0,"Ix":320.0,"IFMAP":4915200,"N":0.0,"D":0.0,"Ky":0.0,"Kx":0.0,"Weight":0,"Od":48.0,"Oy":320.0,"Ox":320.0,"OFMAP":4915200,"MACS":0,"Node Name":"Relu_1"},{"Index":3,"Op":"Conv","Id":48.0,"Iy":320.0,"Ix":320.0,"IFMAP":4915200,"N":96.0,"D":48.0,"Ky":3.0,"Kx":3.0,"Weight":41472,"Od":96.0,"Oy":160.0,"Ox":160.0,"OFMAP":2457600,"MACS":1061683200,"Node Name":"Conv_2"},{"Index":4,"Op":"Relu","Id":96.0,"Iy":160.0,"Ix":160.0,"IFMAP":2457600,"N":0.0,"D":0.0,"Ky":0.0,"Kx":0.0,"Weight":0,"Od":96.0,"Oy":160.0,"Ox":160.0,"OFMAP":2457600,"MACS":0,"Node Name":"Relu_3"},{"Index":5,"Op":"Conv","Id":96.0,"Iy":160.0,"Ix":160.0,"IFMAP":2457600,"N":48.0,"D":96.0,"Ky":1.0,"Kx":1.0,"Weight":4608,"Od":48.0,"Oy":160.0,"Ox":160.0,"OFMAP":1228800,"MACS":117964800,"Node Name":"Conv_4"}]
-  
-  var result = onnx.map(({ MACS }) => MACS)
+  let link = 'http://10.1.40.71:2000/dagview/onnx_summary?model_name=ae_yolov5'
+
+fetch(link)
+
+.then(res => res.json())
+
+.then((result) => {
+
+console.log(result)
+
+})
+
+  var rmv0 = result.map(({ MACS }) => MACS)
 
   let ct = -1
 
-  for (var i = 0; i < result.length; i++){
-      if (result[i] === 0){
+  for (var i = 0; i < rmv0.length; i++){
+      if (rmv0[i] === 0){
     ct = ct+1
-    onnx.splice(i-ct,1)    
+    result.splice(i-ct,1)    
   }}
 
-  var MACS_name = onnx.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
+  const MACS_name = result.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
 
-  // var MACS = onnx.map(({ MACS }) => MACS)
+  // const MACS = onnx.map(({ MACS }) => MACS)
 
-  // var WGT_name = onnx.map(x=>x['Weight'] && ({Name:x['Node Name'],Weight:x['Weight']}))
+  // const WGT_name = onnx.map(x=>x['Weight'] && ({Name:x['Node Name'],Weight:x['Weight']}))
 
-  // var WGT = onnx.map(({ Weight }) => Weight)
+  // const WGT = onnx.map(({ Weight }) => Weight)
 
   //delete later
   var MACS = [
@@ -163,13 +172,14 @@ function App() {
   var IQR = data[Math.round(3*length/4)] - data[Math.round(length/4)]
   var rgl_data = []
   var otl_data = []
+  var otl_data_name = []
 
   for (let i=0; i<data.length; ++i) {
     if(data[i]> median - 2 * IQR && data[i] < mean + 2 * IQR) {
       rgl_data.push(data[i])
     } else {
       otl_data.push(data[i])
-      // otl_data_name.push(MACS_name[i])
+      otl_data_name.push(MACS_name[i])
     }
   }
 
