@@ -1,7 +1,7 @@
 import ReactECharts from 'echarts-for-react';
 import { histogram } from 'echarts-stat';
 
-export default function GraphS({ resultState }) {
+export default function GraphM({ resultState }) {
   let rmv0 = resultState.map(({ MACS }) => MACS)
   let ct = -1
 
@@ -66,7 +66,7 @@ export default function GraphS({ resultState }) {
 
   const options = {    
     title: {
-      text: 'MACS Value Distribution of Conv Nodes',
+      text: 'AE YOLOV5',
       left: 'center',
       top: 20,
       itemGap: 40
@@ -111,10 +111,10 @@ export default function GraphS({ resultState }) {
         name: 'Data',
         type: 'bar',
         stack: "total",
-        barWidth: '99.3%',
+        barWidth: '150%',
         barCategoryGap: 0,
         data: rgl_bar,
-        color: '#415AAA'
+        color: 'purple'
       },{
         name: 'Outliers',
         type: 'bar',
