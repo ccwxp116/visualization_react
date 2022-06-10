@@ -229,21 +229,7 @@ function App() {
         text: 'MACS Value Distribution of Conv Nodes',
         left: 'center',
         top: 20,
-        itemGap: 40,
-        subtext:  '{a|' + text_sub + '}' ,
-        // subtext: text_sub,
-        subtextStyle:{
-            textBoarderType:"dashed",
-            align: 'left',
-            color: '#BA1B1B',
-            rich:{
-              a:{
-                // backgroundColor: "#FFEDE9",
-                // borderColor: "#BA1B1B"
-                // borderWidth: 1
-              }
-            }
-        }
+        itemGap: 40
     },
     grid: {
         left: '3%',
@@ -305,8 +291,8 @@ function App() {
         }
     ],
     legend: {
-        orient: "vertical",
-        top: 45
+        orient: "horizontal",
+        top: 20
     }
   };
 
