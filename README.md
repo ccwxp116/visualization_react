@@ -1,3 +1,10 @@
+# Active Tasks
+1. figure out how to fold code in vscode - 6.10
+2. do chart stuff
+
+# Ongoing
+Write clean code, reference airbnb guide: https://github.com/airbnb/javascript#whitespace
+
 # Change links to test
 
 1. go to http://10.1.40.71:3000/dagview
@@ -6,5 +13,20 @@
 
 # Important
 0. Keep your code clean!
+1. Commit code often, don't push broken code
 1. GraphS and GraphM are seperate, you can break 1 without breaking the other
 2. mainly work on GraphM or S
+
+
+# Completed Tasks
+
+~~2. review git, so you can share code. 
+  a. re-deploy new repo to vercel
+
+4. follow article guide to install eslint onto vscode: https://javascript.plainenglish.io/  
+~~
+
+# Canceled Tasks
+
+4-eslint-rules-to-catch-logic-and-syntax-errors-d9e5be0487a2
+  a. if it breaks, uninstall. google / stack overflow
