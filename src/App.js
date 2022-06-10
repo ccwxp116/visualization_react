@@ -238,13 +238,12 @@ function App() {
         containLabel: true
     },
     tooltip:{
-      trigger: "item"
-      // ,
-      // formatter: function (params) {
-      //   return `${params.seriesName}<br />
-      //   ${params.name}: ${params.data}<br />
-      //   ${text_name}`
-      // }
+      trigger: "item",
+      formatter: function (params) {
+        return `${params.seriesName}<br />
+        ${params.name}: ${params.data}<br />
+        ${text_name}`
+      }
     },
     xAxis: {
         scale: true, 
@@ -292,7 +291,8 @@ function App() {
     ],
     legend: {
         orient: "horizontal",
-        top: 20
+        top: 20,
+        right: 20
     }
   };
 
