@@ -82,13 +82,12 @@ console.log([...new Set(bins.bins[0].sample)])
     text_name.push(inner)
   }
 
-  let otl_arr = []
+  // let otl_arr = []
 
-  for (i = 0; i < text_name.length; i++) {
-    otl_arr = {Node:text_name[i], Value:otl_bar[i]}
-  }
+  // for (i = 0; i < text_name.length; i++) {
+  //   otl_arr = {Node:text_name[i], Value:otl_bar[i]}
+  // }
 
-  console.log(otl_arr)
 
   const options = {    
     title: {
