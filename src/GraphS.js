@@ -12,9 +12,9 @@ export default function GraphS({ resultState }) {
     }
   }
 
-  const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:x['MACS']/1000000}))
+  const MACS_name = resultState.map( x => x['Node Name'] )
 
-  let MACS_m = rmv0.map( x => x/1000000 )
+  let MACS_m = resultState.map( x => x['MACS']/1000000 )
 
   // find outliers    
   let length = MACS_m.length
@@ -33,14 +33,14 @@ export default function GraphS({ resultState }) {
   let otl_data_name = []
 
   for (let i=0; i<data.length; ++i) {
-    if(data[i]> median - 2 * IQR && data[i] < mean + 2 * IQR) {
-      rgl_data.push(data[i])
+    if(MACS_m[i]> median - 2 * IQR && MACS_m[i] < mean + 2 * IQR) {
+      rgl_data.push(MACS_m[i])
     } else {
-      otl_data.push(data[i])
+      otl_data.push(MACS_m[i])
       otl_data_name.push(MACS_name[i])
     }
   }
-console.log(otl_data_name)
+
   // histogram function
   let bins = histogram(MACS_m, "freedmanDiaconis")
 
@@ -66,29 +66,29 @@ console.log(otl_data_name)
 
   // outliers' node name and value
   var text_name = []
-
+console.log([...new Set(bins.bins[0].sample)])
   for (let i = 0; i < bins.bins.length; i++) {
     let uniq = [...new Set(bins.bins[i].sample)]
     let inner = []
     if (bins.bins[i].sample.length != 0) {
-      for (let j = 0; j < otl_data_name.length; j++) {
-        if (uniq.includes(otl_data_name[j].MACS)) {
-          inner.push(otl_data_name[j].Name + ": " + otl_data_name[j].MACS)
-        } 
+      for (let j = 0; j < otl_data.length; j++) {
+        if (uniq.includes(otl_data[j])) {
+          inner.push(otl_data_name[j] + ": " + otl_data[j])
+        }
       }
     } else {
-      inner.push("")
+      inner.push()
     }
     text_name.push(inner)
   }
 
-  // let otl_arr = []
+  let otl_arr = []
 
-  // for (i = 0; i < text_name.length; i++) {
-  //   otl_arr = {Node:text_name[i], Value:otl_bar[i]}
-  // }
+  for (i = 0; i < text_name.length; i++) {
+    otl_arr = {Node:text_name[i], Value:otl_bar[i]}
+  }
 
-  // console.log(otl_arr)
+  console.log(otl_arr)
 
   const options = {    
     title: {
@@ -108,8 +108,7 @@ console.log(otl_data_name)
       formatter: function (params) {
         return `${params.seriesName}<br />
         ${params.name}: ${params.data}<br />
-        1111 node name:value goes here`
-        // ${params.text_name}
+        ${text_name}`
       }
     },
     xAxis: {

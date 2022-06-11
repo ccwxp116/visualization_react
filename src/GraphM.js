@@ -12,8 +12,9 @@ export default function GraphM({ resultState }) {
     }
   }
 
-  const MACS_name = resultState.map(x=>x['MACS'] && ({Name:x['Node Name'],MACS:Math.log10(x['MACS'])}))
-  let MACS_m = rmv0.map( x => Math.log10(x) )
+  const MACS_name = resultState.map( x => x['Node Name'] )
+
+  let MACS_m = resultState.map( x => x['MACS']/1000000 )
 
   // find outliers    
   let length = MACS_m.length
@@ -32,10 +33,10 @@ export default function GraphM({ resultState }) {
   let otl_data_name = []
 
   for (let i=0; i<data.length; ++i) {
-    if(data[i]> median - 2 * IQR && data[i] < mean + 2 * IQR) {
-      rgl_data.push(data[i])
+    if(MACS_m[i]> median - 2 * IQR && MACS_m[i] < mean + 2 * IQR) {
+      rgl_data.push(MACS_m[i])
     } else {
-      otl_data.push(data[i])
+      otl_data.push(MACS_m[i])
       otl_data_name.push(MACS_name[i])
     }
   }
