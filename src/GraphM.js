@@ -117,7 +117,7 @@ console.log(otl_arr)
 
   const options = {    
     title: {
-      text: 'MACS Value Distribution of Conv Nodes',
+      text: 'Weight Distribution',
       left: 'center',
       top: 20,
       itemGap: 40
