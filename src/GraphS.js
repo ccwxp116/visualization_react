@@ -13,7 +13,7 @@ export default function GraphS({ resultState }) {
   }
 
   const MACS_name = resultState.map( x => x['Node Name'] )
-
+console.log(MACS_name)
   let MACS_m = resultState.map( x => x['MACS']/1000000 )
 
   // find outliers    
@@ -21,7 +21,7 @@ export default function GraphS({ resultState }) {
   let data = MACS_m.sort(function(a,b){return a-b})
   let sum=0
 
-  for (let i=0; i<length; ++i) {
+  for (let i = 0; i < length; i++) {
     sum+=data[i]
   }
 
@@ -32,7 +32,7 @@ export default function GraphS({ resultState }) {
   let otl_data = []
   let otl_data_name = []
 
-  for (let i=0; i<data.length; ++i) {
+  for (let i = 0; i < data.length; i++) {
     if(MACS_m[i]> median - 2 * IQR && MACS_m[i] < mean + 2 * IQR) {
       rgl_data.push(MACS_m[i])
     } else {
@@ -40,7 +40,7 @@ export default function GraphS({ resultState }) {
       otl_data_name.push(MACS_name[i])
     }
   }
-
+console.log(otl_data_name)
   // histogram function
   let bins = histogram(MACS_m, "freedmanDiaconis")
 
@@ -48,16 +48,16 @@ export default function GraphS({ resultState }) {
   let otl_bar = []
   let rgl_bar = []
 
-  for (let i=0; i<bins.customData.length; i++) {
+  for (let i = 0; i < bins.customData.length; i++) {
     if ( bins.customData[i][0]> median - 2 * IQR && bins.customData[i][0] < mean + 2 * IQR){
       rgl_bar.push(bins.customData[i][2])
-      otl_bar.push("")
+      otl_bar.push(0)
     } else {
       otl_bar.push(bins.customData[i][2])
-      rgl_bar.push("")
+      rgl_bar.push(0)
     }
   }  
-
+console.log(otl_bar)
   let text_axis = []
 
   for (let i = 0; i < bins.data.length; i++) {
@@ -66,32 +66,58 @@ export default function GraphS({ resultState }) {
 
   // outliers' node name and value
   var text_name = []
-console.log([...new Set(bins.bins[0].sample)])
   for (let i = 0; i < bins.bins.length; i++) {
     let uniq = [...new Set(bins.bins[i].sample)]
     let inner = []
     if (bins.bins[i].sample.length != 0) {
+      let inner2 =[]
       for (let j = 0; j < otl_data.length; j++) {
         if (uniq.includes(otl_data[j])) {
-          inner.push(otl_data_name[j] + ": " + otl_data[j])
+          inner2.push("<br />" + otl_data_name[j] + ": " + otl_data[j])
         }
       }
+      inner2 = inner2.reduce((acc, curVal) => acc.concat(curVal), [])
+      inner.push(inner2)
     } else {
-      inner.push()
+      inner.push(0)
     }
     text_name.push(inner)
   }
 
-  // let otl_arr = []
+  text_name = text_name.reduce((acc, curVal) => acc.concat(curVal), [])
+console.log(text_name)
 
-  // for (i = 0; i < text_name.length; i++) {
-  //   otl_arr = {Node:text_name[i], Value:otl_bar[i]}
-  // }
+  // put them together into array of objects
+  let otl_arr = []
 
+  for (let i = 0; i < text_name.length; i++) {
+    let name_key = ['name', text_name[i]]
+    let value_key = ['value', otl_bar[i]]
+    otl_arr.push(name_key)
+    otl_arr.push(value_key)
+  }
+console.log(otl_arr)
+  const arrayToObject = (arr = []) =>{
+    const res = {}
+      for(let pair of arr) {
+        const [key, value] = pair
+        res[key] = value
+      }
+      return res
+  }
+
+  let otl_obj = []
+
+  for (let i = 0; i < otl_arr.length; i+=2) {
+    let obj = [otl_arr[i], otl_arr[1+i]]
+    otl_obj.push(arrayToObject(obj))
+  }
+
+  console.log(otl_obj)
 
   const options = {    
     title: {
-      text: 'MACS Value Distribution of Conv Nodes',
+      text: 'MACS Value Distribution',
       left: 'center',
       top: 20,
       itemGap: 40
@@ -103,12 +129,12 @@ console.log([...new Set(bins.bins[0].sample)])
       containLabel: true
     },
     tooltip:{
-      trigger: "item",
-      formatter: function (params) {
-        return `${params.seriesName}<br />
-        ${params.name}: ${params.data}<br />
-        ${text_name}`
-      }
+      trigger: "item"
+    //   formatter: function (params) {
+    //     return `${params.seriesName}<br />
+    //     ${params.name}: ${params.data.value}<br />
+    //     ${params.data.name}`
+    //   }
     },
     xAxis: {
       scale: true, 
@@ -137,20 +163,29 @@ console.log([...new Set(bins.bins[0].sample)])
         stack: "total",
         barWidth: '99.3%',
         barCategoryGap: 0,
+        tooltip:{
+          trigger: "item",
+          formatter: function (params) {
+            return `${params.seriesName}<br />
+            ${params.name}: ${params.data}`
+          }},
         data: rgl_bar,
         color: '#415AAA'
-      },{
+      }, {
         name: 'Outliers',
         type: 'bar',
         stack: "total",
         barWidth: '99.3%',
         barCategoryGap: 0,
-        // tooltip: {
-        //   formatter: function (params) {
-        //     return '${params.seriesName}<br />${params.name}: ${params.data}<br />${params.text_name}.'
-        //     }
-        //   },
-        data: otl_bar,
+        tooltip:{
+          trigger: "item",
+          formatter: function (params) {
+            return `${params.seriesName}<br />
+            ${params.name}: ${params.data.value}
+            ${params.data.name}`
+          }
+        },
+        data: otl_obj,
         color: '#BA1B1B'
       }
     ],
