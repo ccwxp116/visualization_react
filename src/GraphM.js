@@ -30,13 +30,15 @@ console.log(Weight_name)
 
   let mean = sum/length; 
   let median = data[Math.round(length/2)]
-  let IQR = data[Math.round(3*length/4)] - data[Math.round(length/4)]
+  let Q3 = data[Math.round(3*length/4)]
+  let Q1 = data[Math.round(length/4)]
+  let IQR = Q3 - Q1
   let rgl_data = []
   let otl_data = []
   let otl_data_name = []
 
   for (let i = 0; i < data.length; i++) {
-    if(Weight[i]> median - 2 * IQR && Weight[i] < mean + 2 * IQR) {
+    if(Weight[i]> Q1 - 1.5 * IQR && Weight[i] < Q3 + 1.5 * IQR) {
       rgl_data.push(Weight[i])
     } else {
       otl_data.push(Weight[i])
@@ -155,7 +157,7 @@ console.log(otl_arr)
       }
     },
     yAxis: {
-      name:"Number of Conv Node"
+      name:"Number of Node"
     },
     gird:{
       show: false
@@ -186,7 +188,7 @@ console.log(otl_arr)
           formatter: function (params) {
             return `${params.seriesName}<br />
             ${params.name}: ${params.data.value}<hr>
-            Node:${params.data.name}`
+            Node${params.data.name}`
           }
         },
         data: otl_obj,

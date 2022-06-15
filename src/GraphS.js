@@ -34,13 +34,15 @@ export default function GraphS({ resultState }) {
 
   let mean = sum/length; 
   let median = data[Math.round(length/2)]
-  let IQR = data[Math.round(3*length/4)] - data[Math.round(length/4)]
+  let Q3 = data[Math.round(3*length/4)]
+  let Q1 = data[Math.round(length/4)]
+  let IQR = Q3 - Q1
   let rgl_data = []
   let otl_data = []
   let otl_data_name = []
 
   for (let i = 0; i < data.length; i++) {
-    if(MACS_m[i]> median - 2 * IQR && MACS_m[i] < mean + 2 * IQR) {
+    if(MACS_m[i]> Q1 - 1.5 * IQR && MACS_m[i] < Q3 + 1.5 * IQR) {
       rgl_data.push(MACS_m[i])
     } else {
       otl_data.push(MACS_m[i])
@@ -60,7 +62,7 @@ export default function GraphS({ resultState }) {
   let rgl_bar = []
 
   for (let i = 0; i < bins.customData.length; i++) {
-    if ( bins.customData[i][0]> median - 2 * IQR && bins.customData[i][0] < mean + 2 * IQR){
+    if ( bins.customData[i][0]> Q1 - 1.5 * IQR && bins.customData[i][0] <  Q3 + 1.5 * IQR){
       rgl_bar.push(bins.customData[i][2])
       otl_bar.push(0)
     } else {
@@ -88,7 +90,7 @@ export default function GraphS({ resultState }) {
       let inner2 =[]
       for (let j = 0; j < otl_data.length; j++) {
         if (uniq.includes(otl_data[j])) {
-          inner2.push( otl_data_name[j] + ": " + otl_data[j] + "<br />")
+          inner2.push("<br />" + otl_data_name[j] + ": " + otl_data[j])
         }
       }
       inner2 = inner2.reduce((acc, curVal) => acc.concat(curVal), [])
@@ -168,7 +170,7 @@ export default function GraphS({ resultState }) {
       }
     },
     yAxis: {
-      name:"Number of Conv Node"
+      name:"Number of Node"
     },
     gird:{
       show: false
@@ -198,8 +200,8 @@ export default function GraphS({ resultState }) {
           trigger: "item",
           formatter: function (params) {
             return `${params.seriesName}<br />
-            ${params.name}: ${params.data.value}
-            Node:${params.data.name}`
+            ${params.name}: ${params.data.value}<hr>
+            Node${params.data.name}`
           }
         },
         data: otl_obj,
