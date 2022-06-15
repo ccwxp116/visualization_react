@@ -3,22 +3,25 @@ import { histogram } from 'echarts-stat';
 
 export default function GraphS({ resultState }) {
   let rmv0 = resultState.map(({ Weight }) => Weight)
+  let totalcheck = resultState.map(({ Op }) => Op)
+
   let ct = -1
+  console.log(resultState)
 
   for (let i = 0; i < rmv0.length; i++) {
-    if (rmv0[i] === 0){
+    if (rmv0[i] === 0 || totalcheck[i] === 'Total'){
       ct = ct+1
       resultState.splice(i-ct,1)    
     }
   }
 
-  const MACS_name = resultState.map( x => x['Node Name'] )
-console.log(MACS_name)
+  const Weight_name = resultState.map( x => x['Node Name'] )
+console.log(Weight_name)
   let Weight = resultState.map( x => x['Weight'])
 
   // find outliers    
   let length = Weight.length
-  let data = Weight.sort(function(a,b){return a-b})
+  let data = [...Weight].sort(function(a,b){return a-b})
   let sum=0
 
   for (let i = 0; i < length; i++) {
@@ -37,10 +40,11 @@ console.log(MACS_name)
       rgl_data.push(Weight[i])
     } else {
       otl_data.push(Weight[i])
-      otl_data_name.push(MACS_name[i])
+      otl_data_name.push(Weight_name[i])
     }
   }
-console.log(otl_data_name)
+console.log(Weight)
+console.log(rgl_data)
   // histogram function
   let bins = histogram(Weight, "freedmanDiaconis")
 
@@ -73,7 +77,7 @@ console.log(otl_bar)
       let inner2 =[]
       for (let j = 0; j < otl_data.length; j++) {
         if (uniq.includes(otl_data[j])) {
-          inner2.push("<br />" + otl_data_name[j] + ": " + otl_data[j])
+          inner2.push( "<br />" + otl_data_name[j] + ": " + otl_data[j])
         }
       }
       inner2 = inner2.reduce((acc, curVal) => acc.concat(curVal), [])
@@ -138,7 +142,7 @@ console.log(otl_arr)
     },
     xAxis: {
       scale: true, 
-      name: "MACS Value (in million)",
+      name: "Weight",
       nameLocation: "middle",
       type: "category",
       show : true,
@@ -181,8 +185,8 @@ console.log(otl_arr)
           trigger: "item",
           formatter: function (params) {
             return `${params.seriesName}<br />
-            ${params.name}: ${params.data.value}
-            ${params.data.name}`
+            ${params.name}: ${params.data.value}<hr>
+            Node:${params.data.name}`
           }
         },
         data: otl_obj,

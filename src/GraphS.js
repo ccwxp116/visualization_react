@@ -2,23 +2,30 @@ import ReactECharts from 'echarts-for-react';
 import { histogram } from 'echarts-stat';
 
 export default function GraphS({ resultState }) {
+  // remove 0 for MACS data
+// #region Methods
   let rmv0 = resultState.map(({ MACS }) => MACS)
+  let totalcheck = resultState.map(({ Op }) => Op)
+
   let ct = -1
+  console.log(resultState)
 
   for (let i = 0; i < rmv0.length; i++) {
-    if (rmv0[i] === 0){
+    if (rmv0[i] === 0 || totalcheck[i] === 'Total'){
       ct = ct+1
       resultState.splice(i-ct,1)    
     }
   }
 
   const MACS_name = resultState.map( x => x['Node Name'] )
-console.log(MACS_name)
-  let MACS_m = resultState.map( x => x['MACS']/1000000 )
 
-  // find outliers    
+  let MACS_m = resultState.map( x => x['MACS']/1000000 )
+// #endregion
+
+  // find outliers 
+// #region Methods
   let length = MACS_m.length
-  let data = MACS_m.sort(function(a,b){return a-b})
+  let data = [...MACS_m].sort(function(a,b){return a-b})
   let sum=0
 
   for (let i = 0; i < length; i++) {
@@ -40,12 +47,16 @@ console.log(MACS_name)
       otl_data_name.push(MACS_name[i])
     }
   }
-console.log(otl_data_name)
+// #endregion
+
   // histogram function
+
   let bins = histogram(MACS_m, "freedmanDiaconis")
 
-  // find histogram data for regular data and outliers
+  // find histogram data for regular data and outliers, and X Axis
+// #region Methods
   let otl_bar = []
+
   let rgl_bar = []
 
   for (let i = 0; i < bins.customData.length; i++) {
@@ -57,15 +68,19 @@ console.log(otl_data_name)
       rgl_bar.push(0)
     }
   }  
-console.log(otl_bar)
+
   let text_axis = []
 
   for (let i = 0; i < bins.data.length; i++) {
     text_axis.push(bins.data[i][4])
   }
+// #endregion
 
-  // outliers' node name and value
+  // combine outliers' node name and value
+// #region Methods
+  
   var text_name = []
+
   for (let i = 0; i < bins.bins.length; i++) {
     let uniq = [...new Set(bins.bins[i].sample)]
     let inner = []
@@ -73,7 +88,7 @@ console.log(otl_bar)
       let inner2 =[]
       for (let j = 0; j < otl_data.length; j++) {
         if (uniq.includes(otl_data[j])) {
-          inner2.push("<br />" + otl_data_name[j] + ": " + otl_data[j])
+          inner2.push( otl_data_name[j] + ": " + otl_data[j] + "<br />")
         }
       }
       inner2 = inner2.reduce((acc, curVal) => acc.concat(curVal), [])
@@ -85,9 +100,10 @@ console.log(otl_bar)
   }
 
   text_name = text_name.reduce((acc, curVal) => acc.concat(curVal), [])
-console.log(text_name)
+// #endregion
 
-  // put them together into array of objects
+  // put combined otl name-value and value together into array of objects to get input data
+// #region Methods
   let otl_arr = []
 
   for (let i = 0; i < text_name.length; i++) {
@@ -96,7 +112,7 @@ console.log(text_name)
     otl_arr.push(name_key)
     otl_arr.push(value_key)
   }
-console.log(otl_arr)
+
   const arrayToObject = (arr = []) =>{
     const res = {}
       for(let pair of arr) {
@@ -112,9 +128,10 @@ console.log(otl_arr)
     let obj = [otl_arr[i], otl_arr[1+i]]
     otl_obj.push(arrayToObject(obj))
   }
+// #endregion
 
-  console.log(otl_obj)
-
+  // graph option
+// #region Methods
   const options = {    
     title: {
       text: 'MACS Value Distribution',
@@ -182,7 +199,7 @@ console.log(otl_arr)
           formatter: function (params) {
             return `${params.seriesName}<br />
             ${params.name}: ${params.data.value}
-            ${params.data.name}`
+            Node:${params.data.name}`
           }
         },
         data: otl_obj,
@@ -195,8 +212,7 @@ console.log(otl_arr)
       right: 20
     }
   }
-
-
-
+// #endregion
+  
   return <ReactECharts option={options} />
 }
