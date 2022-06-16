@@ -8,7 +8,7 @@ function App() {
   const [resultState1, set_resultState1] = useState()
 
   if (!resultState) {
-    const link = 'http://10.1.40.71:2000/dagview/onnx_summary?model_name=bisenet_v2_city&version=4.0.11'
+    const link = 'http://10.1.40.71:2000/dagview/onnx_summary?model_name=desay&version=4.0.11'
     fetch(link)
     .then(res => res.json())
     .then((res) => {
@@ -20,7 +20,7 @@ function App() {
   }
 
   if (!resultState) {
-    const link = 'http://10.1.40.71:2000/dagview/onnx_summary?model_name=bisenet_v2_city&version=4.0.11'
+    const link = 'http://10.1.40.71:2000/dagview/onnx_summary?model_name=desay&version=4.0.11'
     fetch(link)
     .then(res => res.json())
     .then((res) => {
@@ -30,8 +30,8 @@ function App() {
 
   return (
     <div className="App">
-      {resultState && <GraphS resultState={resultState}/>}
-      {resultState1 && <GraphM resultState={resultState1}/>}
+      { resultState && <GraphS resultState = { resultState }/> }
+      { resultState1 && <GraphM resultState = { resultState1 }/> }
     </div>
   );
 }

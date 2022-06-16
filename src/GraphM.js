@@ -4,128 +4,122 @@ import { histogram } from 'echarts-stat';
 export default function GraphS({ resultState }) {
   // remove 0 for weight data
 // #region Methods
-  let rmv0 = resultState.map(({ Weight }) => Weight)
-  let totalcheck = resultState.map(({ Op }) => Op)
+  let rmv0 = resultState.map(({ Weight }) => Weight);
+  let totalcheck = resultState.map(({ Op }) => Op);
 
-  let ct = -1
+  let ct = -1;
 
   for (let i = 0; i < rmv0.length; i++) {
-    if (rmv0[i] === 0 || totalcheck[i] === 'Total'){
-      ct = ct+1
-      resultState.splice(i-ct,1)    
+    if (rmv0[i] === 0 || totalcheck[i] === 'Total') {
+      ct = ct+1;
+      resultState.splice(i-ct,1); 
     }
   }
 
-  const Weight_name = resultState.map( x => x['Node Name'] )
-
-  let Weight = resultState.map( x => x['Weight'])
+  const Weight_name = resultState.map(x => x['Node Name']);
+  let Weight = resultState.map(x => x['Weight']);
 // #endregion
 
   // find outliers    
 // #region Methods
-  let length = Weight.length
-  let data = [...Weight].sort(function(a,b){return a-b})
-  let sum=0
-
-  for (let i = 0; i < length; i++) {
-    sum+=data[i]
-  }
-
-  let Q3 = data[Math.round(3*length/4)]
-  let Q1 = data[Math.round(length/4)]
-  let IQR = Q3 - Q1
-  let rgl_data = []
-  let otl_data = []
-  let otl_data_name = []
+  let length = Weight.length;
+  let data = [...Weight].sort(function(a,b){ return a-b });
+  let Q3 = data[Math.round(3 * length / 4)];
+  let Q1 = data[Math.round(length / 4)];
+  let IQR = Q3 - Q1;
+  let rgl_data = [];
+  let otl_data = [];
+  let otl_data_name = [];
 
   for (let i = 0; i < data.length; i++) {
-    if(Weight[i]> Q1 - 1.5 * IQR && Weight[i] < Q3 + 1.5 * IQR) {
-      rgl_data.push(Weight[i])
+    if (Weight[i] > Q1 - 1.5 * IQR 
+      && Weight[i] < Q3 + 1.5 * IQR) {
+      rgl_data.push(Weight[i]);
     } else {
-      otl_data.push(Weight[i])
-      otl_data_name.push(Weight_name[i])
+      otl_data.push(Weight[i]);
+      otl_data_name.push(Weight_name[i]);
     }
   }
 // #endregion
 
   // histogram function
 // #region Methods
-  let bins = histogram(Weight, "freedmanDiaconis")
+  let bins = histogram(Weight, 'freedmanDiaconis');
 // #endregion
 
   // find histogram data for regular data and outliers, and X axis
 // #region Methods
-  let otl_bar = []
-
-  let rgl_bar = []
+  let otl_bar = [];
+  let rgl_bar = [];
 
   for (let i = 0; i < bins.customData.length; i++) {
-    if ( bins.customData[i][0]> Q1 - 1.5 * IQR && bins.customData[i][0] < Q3 + 1.5 * IQR){
-      rgl_bar.push(bins.customData[i][2])
-      otl_bar.push(0)
+    if (bins.customData[i][0] > Q1 - 1.5 * IQR 
+      && bins.customData[i][0] < Q3 + 1.5 * IQR) {
+      rgl_bar.push(bins.customData[i][2]);
+      otl_bar.push(0);
     } else {
-      otl_bar.push(bins.customData[i][2])
-      rgl_bar.push(0)
+      otl_bar.push(bins.customData[i][2]);
+      rgl_bar.push(0);
     }
-  }  
+  }
 
-  let text_axis = []
+  let text_axis = [];
 
   for (let i = 0; i < bins.data.length; i++) {
-    text_axis.push(bins.data[i][4])
+    text_axis.push(bins.data[i][4]);
   }
 // #endregion
 
   // combine outliers' node name and value
 // #region Methods
-  var text_name = []
-  
+  var text_name = [];
+
   for (let i = 0; i < bins.bins.length; i++) {
-    let uniq = [...new Set(bins.bins[i].sample)]
-    let inner = []
+    let uniq = [...new Set(bins.bins[i].sample)];
+    let inner = [];
     if (bins.bins[i].sample.length != 0) {
-      let inner2 =[]
+      let inner2 =[];
       for (let j = 0; j < otl_data.length; j++) {
         if (uniq.includes(otl_data[j])) {
-          inner2.push( "<br />" + otl_data_name[j] + ": " + otl_data[j])
+          inner2.push('<br />' + otl_data_name[j] + ': ' + otl_data[j]);
         }
       }
-      inner2 = inner2.reduce((acc, curVal) => acc.concat(curVal), [])
-      inner.push(inner2)
+      inner2 = inner2.reduce((acc, curVal) => acc.concat(curVal), []);
+      inner.push(inner2);
     } else {
-      inner.push(0)
+      inner.push(0);
     }
-    text_name.push(inner)
+    text_name.push(inner);
   }
 
-  text_name = text_name.reduce((acc, curVal) => acc.concat(curVal), [])
+  text_name = text_name.reduce((acc, curVal) => acc.concat(curVal), []);
 // #endregion
 
   // put combined otl name-value and value together into array of objects to get input data
 // #region Methods
-  let otl_arr = []
+  let otl_arr = [];
 
   for (let i = 0; i < text_name.length; i++) {
-    let name_key = ['name', text_name[i]]
-    let value_key = ['value', otl_bar[i]]
-    otl_arr.push(name_key)
-    otl_arr.push(value_key)
+    let name_key = ['name', text_name[i]];
+    let value_key = ['value', otl_bar[i]];
+    otl_arr.push(name_key);
+    otl_arr.push(value_key);
   }
 
-  const arrayToObject = (arr = []) =>{
-    const res = {}
+  const arrayToObject = (arr = []) => {
+    const res = {};
       for(let pair of arr) {
-        const [key, value] = pair
-        res[key] = value
+        const [key, value] = pair;
+        res[key] = value;
       }
-      return res
+      return res;
   }
 
-  let otl_obj = []
+  let otl_obj = [];
 
   for (let i = 0; i < otl_arr.length; i+=2) {
-    let obj = [otl_arr[i], otl_arr[1+i]]
-    otl_obj.push(arrayToObject(obj))
+    let obj = [otl_arr[i], otl_arr[1+i]];
+    otl_obj.push(arrayToObject(obj));
   }
 // #endregion
 
@@ -144,8 +138,8 @@ export default function GraphS({ resultState }) {
       bottom: '3%',
       containLabel: true
     },
-    tooltip:{
-      trigger: "item"
+    tooltip: {
+      trigger: 'item'
     //   formatter: function (params) {
     //     return `${params.seriesName}<br />
     //     ${params.name}: ${params.data.value}<br />
@@ -154,33 +148,33 @@ export default function GraphS({ resultState }) {
     },
     xAxis: {
       scale: true, 
-      name: "Weight",
-      nameLocation: "middle",
-      type: "category",
-      show : true,
+      name: 'Weight',
+      nameLocation: 'middle',
+      type: 'category',
+      show: true,
       data: text_axis,
-      nameTextStyle:{
+      nameTextStyle: {
         lineHeight: 20
       },
-      axisLabel:{
+      axisLabel: {
         rotate: 0
       }
     },
     yAxis: {
-      name:"Number of Node"
+      name: 'Number of Node'
     },
-    gird:{
+    gird: {
       show: false
     },
     series: [
       {
         name: 'Data',
         type: 'bar',
-        stack: "total",
+        stack: 'total',
         barWidth: '99.3%',
         barCategoryGap: 0,
-        tooltip:{
-          trigger: "item",
+        tooltip: {
+          trigger: 'item',
           formatter: function (params) {
             return `${params.seriesName}<br />
             ${params.name}: ${params.data}`
@@ -190,11 +184,11 @@ export default function GraphS({ resultState }) {
       }, {
         name: 'Outliers',
         type: 'bar',
-        stack: "total",
+        stack: 'total',
         barWidth: '99.3%',
         barCategoryGap: 0,
-        tooltip:{
-          trigger: "item",
+        tooltip: {
+          trigger: 'item',
           formatter: function (params) {
             return `${params.seriesName}<br />
             ${params.name}: ${params.data.value}<hr>
@@ -206,12 +200,12 @@ export default function GraphS({ resultState }) {
       }
     ],
     legend: {
-      orient: "horizontal",
+      orient: 'horizontal',
       top: 20,
       right: 20
     }
   }
 // #endregion
 
-  return <ReactECharts option={options} />
+  return <ReactECharts option = { options } />
 }
