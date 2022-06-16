@@ -8,7 +8,6 @@ export default function GraphS({ resultState }) {
   let totalcheck = resultState.map(({ Op }) => Op)
 
   let ct = -1
-  console.log(resultState)
 
   for (let i = 0; i < rmv0.length; i++) {
     if (rmv0[i] === 0 || totalcheck[i] === 'Total'){
@@ -32,8 +31,6 @@ export default function GraphS({ resultState }) {
     sum+=data[i]
   }
 
-  let mean = sum/length; 
-  let median = data[Math.round(length/2)]
   let Q3 = data[Math.round(3*length/4)]
   let Q1 = data[Math.round(length/4)]
   let IQR = Q3 - Q1
@@ -52,8 +49,9 @@ export default function GraphS({ resultState }) {
 // #endregion
 
   // histogram function
-
+// #region Methods
   let bins = histogram(MACS_m, "freedmanDiaconis")
+// #endregion
 
   // find histogram data for regular data and outliers, and X Axis
 // #region Methods
@@ -80,7 +78,6 @@ export default function GraphS({ resultState }) {
 
   // combine outliers' node name and value
 // #region Methods
-  
   var text_name = []
 
   for (let i = 0; i < bins.bins.length; i++) {

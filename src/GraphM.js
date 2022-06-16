@@ -2,11 +2,12 @@ import ReactECharts from 'echarts-for-react';
 import { histogram } from 'echarts-stat';
 
 export default function GraphS({ resultState }) {
+  // remove 0 for weight data
+// #region Methods
   let rmv0 = resultState.map(({ Weight }) => Weight)
   let totalcheck = resultState.map(({ Op }) => Op)
 
   let ct = -1
-  console.log(resultState)
 
   for (let i = 0; i < rmv0.length; i++) {
     if (rmv0[i] === 0 || totalcheck[i] === 'Total'){
@@ -16,10 +17,12 @@ export default function GraphS({ resultState }) {
   }
 
   const Weight_name = resultState.map( x => x['Node Name'] )
-console.log(Weight_name)
+
   let Weight = resultState.map( x => x['Weight'])
+// #endregion
 
   // find outliers    
+// #region Methods
   let length = Weight.length
   let data = [...Weight].sort(function(a,b){return a-b})
   let sum=0
@@ -28,8 +31,6 @@ console.log(Weight_name)
     sum+=data[i]
   }
 
-  let mean = sum/length; 
-  let median = data[Math.round(length/2)]
   let Q3 = data[Math.round(3*length/4)]
   let Q1 = data[Math.round(length/4)]
   let IQR = Q3 - Q1
@@ -45,17 +46,21 @@ console.log(Weight_name)
       otl_data_name.push(Weight_name[i])
     }
   }
-console.log(Weight)
-console.log(rgl_data)
-  // histogram function
-  let bins = histogram(Weight, "freedmanDiaconis")
+// #endregion
 
-  // find histogram data for regular data and outliers
+  // histogram function
+// #region Methods
+  let bins = histogram(Weight, "freedmanDiaconis")
+// #endregion
+
+  // find histogram data for regular data and outliers, and X axis
+// #region Methods
   let otl_bar = []
+
   let rgl_bar = []
 
   for (let i = 0; i < bins.customData.length; i++) {
-    if ( bins.customData[i][0]> median - 2 * IQR && bins.customData[i][0] < mean + 2 * IQR){
+    if ( bins.customData[i][0]> Q1 - 1.5 * IQR && bins.customData[i][0] < Q3 + 1.5 * IQR){
       rgl_bar.push(bins.customData[i][2])
       otl_bar.push(0)
     } else {
@@ -63,15 +68,18 @@ console.log(rgl_data)
       rgl_bar.push(0)
     }
   }  
-console.log(otl_bar)
+
   let text_axis = []
 
   for (let i = 0; i < bins.data.length; i++) {
     text_axis.push(bins.data[i][4])
   }
+// #endregion
 
-  // outliers' node name and value
+  // combine outliers' node name and value
+// #region Methods
   var text_name = []
+  
   for (let i = 0; i < bins.bins.length; i++) {
     let uniq = [...new Set(bins.bins[i].sample)]
     let inner = []
@@ -91,9 +99,10 @@ console.log(otl_bar)
   }
 
   text_name = text_name.reduce((acc, curVal) => acc.concat(curVal), [])
-console.log(text_name)
+// #endregion
 
-  // put them together into array of objects
+  // put combined otl name-value and value together into array of objects to get input data
+// #region Methods
   let otl_arr = []
 
   for (let i = 0; i < text_name.length; i++) {
@@ -102,7 +111,7 @@ console.log(text_name)
     otl_arr.push(name_key)
     otl_arr.push(value_key)
   }
-console.log(otl_arr)
+
   const arrayToObject = (arr = []) =>{
     const res = {}
       for(let pair of arr) {
@@ -118,9 +127,10 @@ console.log(otl_arr)
     let obj = [otl_arr[i], otl_arr[1+i]]
     otl_obj.push(arrayToObject(obj))
   }
+// #endregion
 
-  console.log(otl_obj)
-
+  // graph options
+// #region Methods
   const options = {    
     title: {
       text: 'Weight Distribution',
@@ -201,8 +211,7 @@ console.log(otl_arr)
       right: 20
     }
   }
-
-
+// #endregion
 
   return <ReactECharts option={options} />
 }
