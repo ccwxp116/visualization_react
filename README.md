@@ -1,6 +1,12 @@
 # Active Tasks
-1. figure out how to fold code in vscode - 6.10
-2. delete modelhug repo
+- [] Automated E2E testing: choose Cypress (or Puppeteer)
+short video guide: https://youtu.be/Jv2uxzhPFl4?t=661 
+
+- [] Adjust styling to match figma design
+
+Top testing frameworks for career - Jest, Cypress
+- [x] figure out how to fold code in vscode - 6.10
+- [x] delete modelhug repo
 
 
 # Ongoing
