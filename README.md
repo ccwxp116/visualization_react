@@ -1,8 +1,8 @@
 # Active Tasks
-- [] Automated E2E testing: choose Cypress (or Puppeteer)
+- [ ] Automated E2E testing: choose Cypress (or Puppeteer)
 short video guide: https://youtu.be/Jv2uxzhPFl4?t=661 
 
-- [] Adjust styling to match figma design
+- [ ] Adjust styling to match figma design
 
 Top testing frameworks for career - Jest, Cypress
 - [x] figure out how to fold code in vscode - 6.10
