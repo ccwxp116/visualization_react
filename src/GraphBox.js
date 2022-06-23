@@ -2,10 +2,11 @@ import ReactECharts from 'echarts-for-react';
 import { histogram } from 'echarts-stat';
 
 export default function GraphS({ resultState }) {
-  // remove 0 for Weight data
+  // remove 0 for weight data
 // #region Methods
   let rmv0 = resultState.map(({ Weight }) => Weight);
   let totalcheck = resultState.map(({ Op }) => Op);
+
   let ct = -1;
 
   for (let i = 0; i < rmv0.length; i++) {
@@ -16,25 +17,26 @@ export default function GraphS({ resultState }) {
   }
 
   const Weight_name = resultState.map(x => x['Node Name']);
-  let Weight_m = resultState.map(x => x['Weight']/1000000);
+  let Weight = resultState.map(x => x['Weight']);
 // #endregion
 
-  // find outliers 
+  // find outliers    
 // #region Methods
-  let length = Weight_m.length;
-  let data = [...Weight_m].sort(function(a,b){ return a-b });
-  let Q3 = data[Math.round(3*length/4)];
-  let Q1 = data[Math.round(length/4)];
+  let length = Weight.length;
+  let data = [...Weight].sort(function(a,b){ return a-b });
+  let Q3 = data[Math.round(3 * length / 4)];
+  let Q1 = data[Math.round(length / 4)];
   let IQR = Q3 - Q1;
   let rgl_data = [];
   let otl_data = [];
   let otl_data_name = [];
 
   for (let i = 0; i < data.length; i++) {
-    if (Weight_m[i]> Q1 - 1.5 * IQR && Weight_m[i] < Q3 + 1.5 * IQR) {
-      rgl_data.push(Weight_m[i]);
+    if (Weight[i] > Q1 - 1.5 * IQR 
+      && Weight[i] < Q3 + 1.5 * IQR) {
+      rgl_data.push(Weight[i]);
     } else {
-      otl_data.push(Weight_m[i]);
+      otl_data.push(Weight[i]);
       otl_data_name.push(Weight_name[i]);
     }
   }
@@ -42,24 +44,24 @@ export default function GraphS({ resultState }) {
 
   // histogram function
 // #region Methods
-  let bins = histogram(Weight_m, 'freedmanDiaconis');
+  let bins = histogram(Weight, 'freedmanDiaconis');
 // #endregion
 
-  // find histogram data for regular data and outliers, and X Axis
+  // find histogram data for regular data and outliers, and X axis
 // #region Methods
   let otl_bar = [];
   let rgl_bar = [];
 
   for (let i = 0; i < bins.customData.length; i++) {
-    if (bins.customData[i][0] > Q1 - 1.5 * IQR
-      && bins.customData[i][0] <  Q3 + 1.5 * IQR) {
+    if (bins.customData[i][0] > Q1 - 1.5 * IQR 
+      && bins.customData[i][0] < Q3 + 1.5 * IQR) {
       rgl_bar.push(bins.customData[i][2]);
       otl_bar.push(0);
     } else {
       otl_bar.push(bins.customData[i][2]);
       rgl_bar.push(0);
     }
-  }  
+  }
 
   let text_axis = [];
 
@@ -106,7 +108,7 @@ export default function GraphS({ resultState }) {
 
   const arrayToObject = (arr = []) => {
     const res = {};
-      for (let pair of arr) {
+      for(let pair of arr) {
         const [key, value] = pair;
         res[key] = value;
       }
@@ -121,89 +123,71 @@ export default function GraphS({ resultState }) {
   }
 // #endregion
 
-  // graph option
+console.log(Weight)
+  // graph options
 // #region Methods
-  const options = {    
-    title: {
-      text: 'Weight Value Distribution',
-      left: 'center',
-      top: 20,
-      itemGap: 40
-    },
-    grid: {
-      left: '3%',
-      right: '3%',
-      bottom: '3%',
-      containLabel: true
-    },
-    tooltip: {
-      trigger: 'item'
-    //   formatter: function (params) {
-    //     return `${params.seriesName}<br />
-    //     ${params.name}: ${params.data.value}<br />
-    //     ${params.data.name}`
-    //   }
-    },
-    xAxis: {
-      scale: true, 
-      name: 'Weight Value (in million)',
-      nameLocation: 'middle',
-      type: 'category',
-      show : true,
-      data: text_axis,
-      nameTextStyle: {
-        lineHeight: 20
+  const options = {
+    title: [
+      {
+        text: 'weight distribution',
+        left: 'center'
+      }
+    ],
+    dataset: [
+      {
+        // prettier-ignore
+        source: [
+                  Weight
+                  ]
       },
-      axisLabel: {
-        rotate: 0
+      {
+        transform: {
+          type: 'boxplot'
+        }
+      },
+      {
+        fromDatasetIndex: 1,
+        fromTransformResult: 1
+      }
+    ],
+    tooltip: {
+      trigger: 'item',
+      axisPointer: {
+        type: 'shadow'
       }
     },
     yAxis: {
-      name: 'Number of Node'
+      type: 'category',
+      boundaryGap: true,
+      nameGap: 30,
+      splitArea: {
+        show: false
+      },
+      splitLine: {
+        show: false
+      }
     },
-    gird: {
-      show: false
+    xAxis: {
+      type: 'value',
+      splitArea: {
+        show: true
+      }
     },
     series: [
       {
-        name: 'Data',
-        type: 'bar',
-        stack: 'total',
-        barWidth: '99.3%',
-        barCategoryGap: 0,
-        tooltip: {
-          trigger: 'item',
-          formatter: function (params) {
-            return `${params.seriesName}<br />
-            ${params.name}: ${params.data}`
-          }},
-        data: rgl_bar,
-        color: '#415AAA'
-      }, {
-        name: 'Outliers',
-        type: 'bar',
-        stack: 'total',
-        barWidth: '99.3%',
-        barCategoryGap: 0,
-        tooltip: {
-          trigger: 'item',
-          formatter: function (params) {
-            return `${params.seriesName}<br />
-            ${params.name}: ${params.data.value}<hr>
-            Node${params.data.name}`
-          }
-        },
-        data: otl_obj,
-        color: '#BA1B1B'
+        name: 'boxplot',
+        type: 'boxplot',
+        datasetIndex: 1
+      },
+      {
+        name: 'outlier',
+        type: 'scatter',
+        encode: { x: 1, y: 0 },
+        datasetIndex: 2
       }
-    ],
-    legend: {
-      orient: 'horizontal',
-      top: 20,
-      right: 20
-    }
-  }
+    ]
+  };
 // #endregion
-  
+
   return <ReactECharts option = { options } />
 }
