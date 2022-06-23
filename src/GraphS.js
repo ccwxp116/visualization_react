@@ -2,9 +2,9 @@ import ReactECharts from 'echarts-for-react';
 import { histogram } from 'echarts-stat';
 
 export default function GraphS({ resultState }) {
-  // remove 0 for Weight data
+  // remove 0 for MACS data
 // #region Methods
-  let rmv0 = resultState.map(({ Weight }) => Weight);
+  let rmv0 = resultState.map(({ MACS }) => MACS);
   let totalcheck = resultState.map(({ Op }) => Op);
   let ct = -1;
 
@@ -15,14 +15,14 @@ export default function GraphS({ resultState }) {
     }
   }
 
-  const Weight_name = resultState.map(x => x['Node Name']);
-  let Weight_m = resultState.map(x => x['Weight']/1000000);
+  const MACS_name = resultState.map(x => x['Node Name']);
+  let MACS_m = resultState.map(x => x['MACS']/1000000);
 // #endregion
 
   // find outliers 
 // #region Methods
-  let length = Weight_m.length;
-  let data = [...Weight_m].sort(function(a,b){ return a-b });
+  let length = MACS_m.length;
+  let data = [...MACS_m].sort(function(a,b){ return a-b });
   let Q3 = data[Math.round(3*length/4)];
   let Q1 = data[Math.round(length/4)];
   let IQR = Q3 - Q1;
@@ -31,18 +31,18 @@ export default function GraphS({ resultState }) {
   let otl_data_name = [];
 
   for (let i = 0; i < data.length; i++) {
-    if (Weight_m[i]> Q1 - 1.5 * IQR && Weight_m[i] < Q3 + 1.5 * IQR) {
-      rgl_data.push(Weight_m[i]);
+    if (MACS_m[i]> Q1 - 1.5 * IQR && MACS_m[i] < Q3 + 1.5 * IQR) {
+      rgl_data.push(MACS_m[i]);
     } else {
-      otl_data.push(Weight_m[i]);
-      otl_data_name.push(Weight_name[i]);
+      otl_data.push(MACS_m[i]);
+      otl_data_name.push(MACS_name[i]);
     }
   }
 // #endregion
 
   // histogram function
 // #region Methods
-  let bins = histogram(Weight_m, 'freedmanDiaconis');
+  let bins = histogram(MACS_m, 'freedmanDiaconis');
 // #endregion
 
   // find histogram data for regular data and outliers, and X Axis
@@ -125,7 +125,7 @@ export default function GraphS({ resultState }) {
 // #region Methods
   const options = {    
     title: {
-      text: 'Weight Value Distribution',
+      text: 'MACS Value Distribution',
       left: 'center',
       top: 20,
       itemGap: 40
@@ -146,7 +146,7 @@ export default function GraphS({ resultState }) {
     },
     xAxis: {
       scale: true, 
-      name: 'Weight Value (in million)',
+      name: 'MACS Value (in million)',
       nameLocation: 'middle',
       type: 'category',
       show : true,
